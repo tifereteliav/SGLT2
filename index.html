@@ -34,12 +34,6 @@
             border-color: #3b82f6; /* כחול */
             background-color: #eff6ff; /* כחול בהיר */
         }
-        .correct-answer-bg {
-            background-color: #d1fae5; /* ירוק בהיר למענה נכון */
-        }
-        .incorrect-answer-bg {
-            background-color: #fee2e2; /* אדום בהיר למענה שגוי */
-        }
     </style>
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
@@ -51,8 +45,26 @@
             אתגר מקצועי: החלטות טיפוליות ב-SGLT2
         </h1>
 
-        <!-- שלב 1: גרירה והתאמה -->
-        <div id="phase1" class="phase-screen">
+        <!-- שלב כניסה: עמוד התחלה חדש -->
+        <div id="start-screen" class="phase-screen text-center p-8 flex flex-col items-center justify-center min-h-[400px]">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-700 mb-6">ברוכים הבאים לאתגר SGLT2!</h2>
+            <p class="text-gray-600 mb-10 max-w-md">בואו לבחון את הידע הקליני שלכם בהתחלת טיפול ומעקב אחר מטופלים המקבלים SGLT2.</p>
+        
+            <div class="space-y-4 w-full max-w-xs">
+                <!-- לחצן להתחלת האתגר הנוכחי -->
+                <button onclick="startChallenge()" class="w-full px-8 py-4 bg-green-600 text-white text-xl font-bold rounded-lg hover:bg-green-700 transition duration-200 shadow-xl transform hover:scale-[1.02]">
+                    התחל את אתגר SGLT2
+                </button>
+        
+                <!-- לחצן לאתר האתגר המלא -->
+                <a href="https://diabetes-challenge.vercel.app" target="_blank" class="block w-full px-8 py-3 bg-blue-100 text-blue-700 font-semibold rounded-lg hover:bg-blue-200 transition duration-200 shadow-md">
+                    לאתר אתגר הסוכרת כולו
+                </a>
+            </div>
+        </div>
+        
+        <!-- שלב 1: גרירה והתאמה - מוסתר בהתחלה -->
+        <div id="phase1" class="phase-screen hidden">
             <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-6 text-center">שלב 1 מתוך 2: התאמת מצבים קליניים</h2>
             <p class="text-gray-600 mb-8 text-center">גרור כל היגד קליני אל הקטגוריה המתאימה (מומלץ / נמנע).</p>
 
@@ -84,7 +96,7 @@
             </div>
         </div>
 
-        <!-- שלב 2: בחירת המלצות הדרכה -->
+        <!-- שלב 2: בחירת המלצות הדרכה - מוסתר בהתחלה -->
         <div id="phase2" class="phase-screen hidden">
             <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-6 text-center">שלב 2 מתוך 2: הדרכת מטופל</h2>
             <p class="text-gray-600 mb-8 text-center">סמן את כל ההמלצות הנכונות שיש להדריך מטופל המקבל SGLT2. (ייתכן שיותר מתשובה אחת נכונה)</p>
@@ -100,7 +112,7 @@
             </div>
         </div>
 
-        <!-- שלב 3: תוצאות וקוד סודי - הוסר תצוגת הציון -->
+        <!-- שלב 3: תוצאות וקוד סודי - מוסתר בהתחלה -->
         <div id="results" class="phase-screen hidden text-center">
             <h2 class="text-3xl font-extrabold text-green-600 mb-10">האתגר הושלם!</h2>
             
@@ -161,7 +173,6 @@
             draggedItem = e.target;
             draggedItem.classList.add('dragging');
             e.dataTransfer.setData('text/plain', draggedItem.dataset.id);
-            // מניעת גרירה על טאץ', נטפל בנפרד (ראו מטה)
         }
 
         /**
@@ -201,7 +212,7 @@
                 phase1Results[itemId] = target;
                 
                 // עדכון מראה הכרטיס שהושלם
-                draggedItem.classList.remove('bg-white', 'hover:bg-gray-100');
+                draggedItem.classList.remove('bg-white', 'hover:bg-gray-100', 'border-gray-200');
                 draggedItem.classList.add('bg-blue-100');
 
                 // בדיקה אם כל הפריטים שוחררו
@@ -224,9 +235,9 @@
          * בדיקת השלמת שלב 1 והפעלת כפתור המעבר
          */
         function checkPhase1Completion() {
-            const itemsInDragArea = document.getElementById('drag-items').children.length;
-            const itemsInDropAreas = document.getElementById('drop-recommended').children.length + 
-                                     document.getElementById('drop-avoid').children.length - 2; // -2 for headers
+            // ספירת הילדים בכל אזור השחרור פחות כותרת ה-h3
+            const itemsInDropAreas = $('#drop-recommended').children.length + 
+                                     $('#drop-avoid').children.length - 2; 
             
             const totalItems = phase1Data.length;
             
@@ -240,6 +251,15 @@
         }
 
         // --- פונקציות עיבוד שלבים ---
+
+        /**
+         * מעבר ממסך הפתיחה לשלב 1
+         */
+        function startChallenge() {
+            $('#start-screen').classList.add('hidden');
+            $('#phase1').classList.remove('hidden');
+            loadPhase1();
+        }
 
         /**
          * טעינת שלב 1 (היגדים)
@@ -271,8 +291,10 @@
             });
             
             // ניקוי אזורי השחרור הקודמים (רק הפריטים)
-            $('#drop-recommended').innerHTML = $('#drop-recommended').querySelector('h3').outerHTML;
-            $('#drop-avoid').innerHTML = $('#drop-avoid').querySelector('h3').outerHTML;
+            const recommendedHeader = $('#drop-recommended').querySelector('h3').outerHTML;
+            const avoidHeader = $('#drop-avoid').querySelector('h3').outerHTML;
+            $('#drop-recommended').innerHTML = recommendedHeader;
+            $('#drop-avoid').innerHTML = avoidHeader;
             
             checkPhase1Completion();
         }
@@ -357,12 +379,17 @@
             // 4. הצגת התוצאות
             $('#phase2').classList.add('hidden');
             $('#results').classList.remove('hidden');
-            // $('#final-percentage').textContent = `${roundedPercentage}%`; // הוסר לבקשת המשתמש
             $('#secret-code').textContent = secretCode;
         }
 
         // --- אתחול ---
-        window.onload = loadPhase1;
+        window.onload = function() {
+            // כל המסכים מוסתרים ב-HTML, מסך הפתיחה מוצג
+            $('#start-screen').classList.remove('hidden');
+            $('#phase1').classList.add('hidden');
+            $('#phase2').classList.add('hidden');
+            $('#results').classList.add('hidden');
+        };
 
     </script>
 </body>
