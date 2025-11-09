@@ -1,737 +1,380 @@
 <!DOCTYPE html>
-
 <html lang="he" dir="rtl">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>אתגר SGLT2</title>
-
     <!-- טעינת Tailwind CSS -->
-
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
-
         /* הגדרת פונט Inter ותמיכה ב-RTL */
-
         :root {
-
             font-family: 'Inter', sans-serif;
-
         }
-
         .container-shadow {
-
             box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
-
         }
-
         /* סגנון לכרטיסיות גרירה */
-
         .draggable {
-
             cursor: grab;
-
             transition: transform 0.2s, box-shadow 0.2s;
-
         }
-
         .dragging {
-
             opacity: 0.7;
-
             transform: scale(1.05);
-
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-
             z-index: 1000;
-
         }
-
         .droppable {
-
             min-height: 150px;
-
             border: 3px dashed transparent;
-
             transition: background-color 0.3s, border-color 0.3s;
-
         }
-
         .drag-over {
-
             border-color: #3b82f6; /* כחול */
-
             background-color: #eff6ff; /* כחול בהיר */
-
         }
-
         .correct-answer-bg {
-
             background-color: #d1fae5; /* ירוק בהיר למענה נכון */
-
         }
-
         .incorrect-answer-bg {
-
             background-color: #fee2e2; /* אדום בהיר למענה שגוי */
-
         }
-
     </style>
-
 </head>
-
 <body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
-
-
 
     <div id="challenge-container" class="w-full max-w-4xl bg-white rounded-xl container-shadow p-6 sm:p-10">
 
-
+        <!-- קישור לאתר האתגר הראשי (נוסף לבקשת המשתמש) -->
+        <div class="mb-4 text-center">
+            <a href="https://diabetes-challenge.vercel.app/" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm font-semibold transition duration-150 border-b border-dashed border-blue-400 pb-0.5 inline-block">
+                לאתר אתגר הסוכרת הראשי
+            </a>
+        </div>
 
         <!-- כותרת האתגר -->
-
         <h1 class="text-3xl sm:text-4xl font-extrabold text-blue-800 text-center mb-6 border-b-2 pb-2 border-blue-200">
-
             אתגר מקצועי: החלטות טיפוליות ב-SGLT2
-
         </h1>
 
-
-
         <!-- שלב 1: גרירה והתאמה -->
-
         <div id="phase1" class="phase-screen">
-
             <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-6 text-center">שלב 1 מתוך 2: התאמת מצבים קליניים</h2>
-
             <p class="text-gray-600 mb-8 text-center">גרור כל היגד קליני אל הקטגוריה המתאימה (מומלץ / נמנע).</p>
 
-
-
             <div id="drag-items" class="mb-10 space-y-4">
-
                 <!-- פה ימוקמו כרטיסי ההיגדים -->
-
             </div>
-
-
 
             <div class="flex flex-col lg:flex-row-reverse gap-6">
-
                 
-
                 <!-- יעד גרירה: מומלץ -->
-
                 <div id="drop-recommended" data-target="recommended" class="droppable lg:w-1/2 p-4 sm:p-6 rounded-xl bg-green-50 border-green-300 shadow-md">
-
                     <h3 class="text-lg sm:text-xl font-bold text-green-700 mb-4 text-center">
-
                         מומלץ לשקול מתן SGLT2
-
                     </h3>
-
                 </div>
-
-
 
                 <!-- יעד גרירה: נמנע -->
-
                 <div id="drop-avoid" data-target="avoid" class="droppable lg:w-1/2 p-4 sm:p-6 rounded-xl bg-red-50 border-red-300 shadow-md">
-
                     <h3 class="text-lg sm:text-xl font-bold text-red-700 mb-4 text-center">
-
                         נמנע ממתן SGLT2
-
                     </h3>
-
                 </div>
-
             </div>
-
-
 
             <div class="flex justify-center mt-8">
-
                 <button onclick="startPhase2()" id="phase1-next-btn" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-lg disabled:opacity-50" disabled>
-
                     מעבר לשלב 2
-
                 </button>
-
             </div>
-
         </div>
-
-
 
         <!-- שלב 2: בחירת המלצות הדרכה -->
-
         <div id="phase2" class="phase-screen hidden">
-
             <h2 class="text-xl sm:text-2xl font-bold text-gray-700 mb-6 text-center">שלב 2 מתוך 2: הדרכת מטופל</h2>
-
             <p class="text-gray-600 mb-8 text-center">סמן את כל ההמלצות הנכונות שיש להדריך מטופל המקבל SGLT2. (ייתכן שיותר מתשובה אחת נכונה)</p>
 
-
-
             <div id="counseling-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
                 <!-- פה ימוקמו אפשרויות ההדרכה -->
-
             </div>
-
-
 
             <div class="flex justify-center mt-8">
-
                 <button onclick="showResults()" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-lg">
-
                     סיום וקבלת קוד
-
                 </button>
-
             </div>
-
         </div>
-
-
 
         <!-- שלב 3: תוצאות וקוד סודי - הוסר תצוגת הציון -->
-
         <div id="results" class="phase-screen hidden text-center">
-
             <h2 class="text-3xl font-extrabold text-green-600 mb-10">האתגר הושלם!</h2>
-
             
-
             <h3 class="text-2xl font-bold text-gray-800 mb-4">הקוד הסודי שלך:</h3>
-
             <div class="bg-yellow-100 border-4 border-yellow-400 p-4 rounded-lg inline-block">
-
                 <p id="secret-code" class="text-3xl font-mono text-yellow-800">XXXX</p>
-
             </div>
-
             <p class="text-gray-500 mt-2">הזן קוד זה לטופס ההגרלה.</p>
 
-
-
             <div class="mt-8">
-
                 <button onclick="window.location.reload()" class="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition duration-200 shadow-lg">
-
                     התחל מחדש
-
                 </button>
-
             </div>
-
         </div>
-
-
 
     </div>
 
-
-
     <script>
-
         // --- נתוני האתגר ---
 
-
-
         // שלב 1: התאמת מצבים קליניים (ID, היגד, תשובה נכונה)
-
         const phase1Data = [
-
             { id: 1, text: 'מטופל סוכרתי עם אי ספיקת לב', answer: 'recommended', correct: false },
-
             { id: 2, text: 'מטופל עם EGFR פחות מ60 ומיקרואלבומין בשתן', answer: 'recommended', correct: false },
-
             { id: 3, text: 'מטופלת עם היסטוריה של זיהומים גניטליים חוזרים', answer: 'avoid', correct: false },
-
             { id: 4, text: 'מטופל סוכרתי ששוחרר מאשפוז אחרי DKA', answer: 'avoid', correct: false },
-
             { id: 5, text: 'מטופלת עם סוכרת הריון', answer: 'avoid', correct: false }
-
         ];
-
         
-
         // שלב 2: הדרכות מטופל (ID, היגד, נכון/לא נכון)
-
         const phase2Data = [
-
             { id: 6, text: 'יש להקפיד על שתיה בכמות נאותה', isCorrect: true, selected: false },
-
             { id: 7, text: 'יש לבצע מעקב לחץ דם', isCorrect: true, selected: false },
-
             { id: 8, text: 'יש לעקוב אחרי ערכי סוכר', isCorrect: true, selected: false },
-
             { id: 9, text: 'יש להפסיק את הטיפול 3 ימים לפני ניתוח', isCorrect: true, selected: false },
-
             { id: 10, text: 'יש להפסיק את הטיפול בזמן מחלת חום או זיהום משמעותי', isCorrect: true, selected: false },
-
             { id: 11, text: 'יש להפסיק טיפול באינסולין בזמן טיפול ב SGLT2', isCorrect: false, selected: false },
-
             { id: 12, text: 'מומלץ לבצע דיאטה קטוגנית בייחוד עם BMI הינו נמוך', isCorrect: false, selected: false },
-
             { id: 13, text: 'בזמן מחלת חום הסוכרים עולים ולכן יש להגביר את מינון התרופה', isCorrect: false, selected: false }
-
         ];
-
-
 
         // --- משתני מצב ---
-
         let phase1Results = {}; // { item_id: 'recommended' / 'avoid' }
-
         const MAX_SCORE = 13; // 5 מ-P1 + 8 מ-P2
 
-
-
         // --- עזרי DOM כלליים ---
-
         const $ = selector => document.querySelector(selector);
-
         const $$ = selector => document.querySelectorAll(selector);
 
-
-
         // --- פונקציות עזר גרירה/שחרור (Drag & Drop) ---
-
         let draggedItem = null;
 
-
-
         /**
-
          * פונקציית התחלת הגרירה (Drag Start)
-
          */
-
         function handleDragStart(e) {
-
             draggedItem = e.target;
-
             draggedItem.classList.add('dragging');
-
             e.dataTransfer.setData('text/plain', draggedItem.dataset.id);
-
             // מניעת גרירה על טאץ', נטפל בנפרד (ראו מטה)
-
         }
 
-
-
         /**
-
          * פונקציית מעבר מעל יעד גרירה (Drag Over)
-
          */
-
         function handleDragOver(e) {
-
             e.preventDefault(); // מאפשר שחרור (Drop)
-
             if (e.target.closest('.droppable')) {
-
                 e.target.closest('.droppable').classList.add('drag-over');
-
             }
-
         }
 
-
-
         /**
-
          * פונקציית יציאה מיעד גרירה (Drag Leave)
-
          */
-
         function handleDragLeave(e) {
-
             if (e.target.classList.contains('droppable')) {
-
                 e.target.classList.remove('drag-over');
-
             }
-
         }
 
-
-
         /**
-
          * פונקציית שחרור (Drop)
-
          */
-
         function handleDrop(e) {
-
             e.preventDefault();
-
             const dropTarget = e.target.closest('.droppable');
-
             if (dropTarget) {
-
                 dropTarget.classList.remove('drag-over');
-
                 const itemId = draggedItem.dataset.id;
-
                 const target = dropTarget.dataset.target;
 
-
-
                 // עדכון המיקום של הפריט
-
                 dropTarget.appendChild(draggedItem);
-
                 
-
                 // עדכון תוצאות השלב
-
                 phase1Results[itemId] = target;
-
                 
-
                 // עדכון מראה הכרטיס שהושלם
-
                 draggedItem.classList.remove('bg-white', 'hover:bg-gray-100');
-
                 draggedItem.classList.add('bg-blue-100');
 
-
-
                 // בדיקה אם כל הפריטים שוחררו
-
                 checkPhase1Completion();
-
             }
-
         }
 
-
-
         /**
-
          * פונקציית סיום גרירה (Drag End)
-
          */
-
         function handleDragEnd(e) {
-
             if (draggedItem) {
-
                 draggedItem.classList.remove('dragging');
-
                 draggedItem = null;
-
             }
-
             $$('.droppable').forEach(d => d.classList.remove('drag-over'));
-
         }
-
-
 
         /**
-
          * בדיקת השלמת שלב 1 והפעלת כפתור המעבר
-
          */
-
         function checkPhase1Completion() {
-
             const itemsInDragArea = document.getElementById('drag-items').children.length;
-
             const itemsInDropAreas = document.getElementById('drop-recommended').children.length + 
-
                                      document.getElementById('drop-avoid').children.length - 2; // -2 for headers
-
             
-
             const totalItems = phase1Data.length;
-
             
-
             if (itemsInDropAreas === totalItems) {
-
                 $('#phase1-next-btn').disabled = false;
-
                 $('#phase1-next-btn').classList.remove('opacity-50');
-
             } else {
-
                 $('#phase1-next-btn').disabled = true;
-
                 $('#phase1-next-btn').classList.add('opacity-50');
-
             }
-
         }
-
-
 
         // --- פונקציות עיבוד שלבים ---
 
-
-
         /**
-
          * טעינת שלב 1 (היגדים)
-
          */
-
         function loadPhase1() {
-
             const dragItemsContainer = $('#drag-items');
-
             dragItemsContainer.innerHTML = '';
-
             
-
             // טעינת ההיגדים
-
             phase1Data.forEach(item => {
-
                 const itemEl = document.createElement('div');
-
                 itemEl.dataset.id = item.id;
-
                 itemEl.draggable = true;
-
                 itemEl.className = 'draggable p-3 sm:p-4 bg-white border border-gray-200 rounded-lg shadow-sm font-semibold text-gray-800 text-center hover:bg-gray-100 transition duration-150';
-
                 itemEl.textContent = item.text;
-
                 
-
                 itemEl.addEventListener('dragstart', handleDragStart);
-
                 itemEl.addEventListener('dragend', handleDragEnd);
-
                 
-
                 dragItemsContainer.appendChild(itemEl);
-
             });
-
-
 
             // הוספת מאזינים ליעדי השחרור
-
             const droppables = $$('.droppable');
-
             droppables.forEach(dropZone => {
-
                 dropZone.addEventListener('dragover', handleDragOver);
-
                 dropZone.addEventListener('dragleave', handleDragLeave);
-
                 dropZone.addEventListener('drop', handleDrop);
-
             });
-
             
-
             // ניקוי אזורי השחרור הקודמים (רק הפריטים)
-
             $('#drop-recommended').innerHTML = $('#drop-recommended').querySelector('h3').outerHTML;
-
             $('#drop-avoid').innerHTML = $('#drop-avoid').querySelector('h3').outerHTML;
-
             
-
             checkPhase1Completion();
-
         }
 
-
-
         /**
-
          * מעבר לשלב 2
-
          */
-
         function startPhase2() {
-
             $('#phase1').classList.add('hidden');
-
             $('#phase2').classList.remove('hidden');
-
             loadPhase2();
-
         }
 
-
-
         /**
-
          * טעינת שלב 2 (הדרכות)
-
          */
-
         function loadPhase2() {
-
             const counselingContainer = $('#counseling-options');
-
             counselingContainer.innerHTML = '';
-
             
-
             phase2Data.forEach(item => {
-
                 const label = document.createElement('label');
-
                 label.className = 'flex items-center p-3 rounded-lg border border-gray-300 transition duration-150 cursor-pointer hover:shadow-lg bg-white shadow-sm';
-
                 label.innerHTML = `
-
                     <input type="checkbox" data-id="${item.id}" class="form-checkbox h-5 w-5 text-blue-600 rounded mr-3 flex-shrink-0" onchange="toggleSelection(${item.id})">
-
                     <span class="text-sm sm:text-base text-gray-700 font-medium">${item.text}</span>
-
                 `;
-
                 counselingContainer.appendChild(label);
-
             });
-
         }
 
-
-
         /**
-
          * עדכון סטטוס בחירה בשלב 2
-
          */
-
         function toggleSelection(id) {
-
             const item = phase2Data.find(d => d.id === id);
-
             if (item) {
-
                 item.selected = !item.selected;
-
             }
-
         }
 
-
-
         /**
-
          * חישוב הציון והצגת תוצאות
-
          */
-
         function showResults() {
-
             let rawScore = 0;
 
-
-
             // 1. חישוב ציון שלב 1 (5 נקודות)
-
             phase1Data.forEach(item => {
-
                 const userChoice = phase1Results[item.id];
-
                 if (userChoice === item.answer) {
-
                     rawScore++;
-
                 }
-
             });
-
-
 
             // 2. חישוב ציון שלב 2 (8 נקודות)
-
             phase2Data.forEach(item => {
-
                 // נכון אם: הפריט נכון והמשתמש בחר בו (item.isCorrect && item.selected)
-
                 // או: הפריט לא נכון והמשתמש לא בחר בו (!item.isCorrect && !item.selected)
-
                 if (item.isCorrect === item.selected) {
-
                     rawScore++;
-
                 }
-
             });
-
             
-
             // 3. חישוב אחוז וקביעת קוד
-
-            const percentage = (rawScore / MAX_SCORE) * 100;
-
+            const MAX_SCORE_P2 = phase2Data.length;
+            const MAX_SCORE_P1 = phase1Data.length;
+            
+            const totalMaxScore = MAX_SCORE_P1 + MAX_SCORE_P2;
+            const percentage = (rawScore / totalMaxScore) * 100;
             const roundedPercentage = Math.round(percentage);
-
             let secretCode = '';
 
-
-
             if (roundedPercentage >= 90.01) {
-
                 secretCode = 'SGLT8888'; // 90-100
-
             } else if (roundedPercentage >= 80.01) {
-
                 secretCode = 'SGLT7777'; // 80-90
-
             } else if (roundedPercentage >= 60.01) {
-
                 secretCode = 'SGLT6666'; // 60-80
-
             } else if (roundedPercentage >= 40.01) {
-
                 secretCode = 'SGLT4444'; // 40-60
-
             } else {
-
                 secretCode = 'SGLT2222'; // 0-40
-
             }
 
-
-
             // 4. הצגת התוצאות
-
             $('#phase2').classList.add('hidden');
-
             $('#results').classList.remove('hidden');
-
             // $('#final-percentage').textContent = `${roundedPercentage}%`; // הוסר לבקשת המשתמש
-
             $('#secret-code').textContent = secretCode;
-
         }
 
-
-
         // --- אתחול ---
-
         window.onload = loadPhase1;
 
-
-
     </script>
-
 </body>
-
 </html>
